@@ -15,7 +15,7 @@ public class DatabaseMain {
 		Tespa teams = new Tespa();
 
 		// connect to regional or national page
-		String tourney = REGIONAL;
+		String tourney = NATIONAL;
 		String homePage = con("https://compete.tespa.org/tournament/" + tourney + "/phase/1");
 
 		// regex for finding team names
@@ -29,9 +29,11 @@ public class DatabaseMain {
 		Matcher mScores = pScores.matcher(homePage);
 
 		// regex for finding team URLs
-		String regexTeamURL = "https://compete.tespa.org/tournament/" + tourney + "/team/([0-9]+)";
-		Pattern pTeamURL = Pattern.compile(regexTeamURL);
-		Matcher mTeamURL = pTeamURL.matcher(homePage);
+		String combineTest = "";
+		//String combineTest = ".*\\s*?[>\\s]([^<]*?)[<\\s]";
+		String regexTeam = "(https://compete.tespa.org/tournament/" + tourney + "/team/[0-9]+)" + combineTest;
+		Pattern pTeam = Pattern.compile(regexTeam);
+		Matcher mTeam = pTeam.matcher(homePage);
 
 		// regex for finding bnets from team page (Matcher must be initialized
 		// inside loop)
@@ -44,9 +46,10 @@ public class DatabaseMain {
 
 		// for each team found
 		while (mTeamName.find()) {
-
+			
 			// make a new team (with team name)
-			Team t = new Team(mTeamName.group(2));
+			Team t = new Team(mTeamName.group(2)); // changed
+			//System.out.println(t.getName() + " found");
 
 			// find their scores
 			if (mScores.find()) {
@@ -61,10 +64,11 @@ public class DatabaseMain {
 			}
 
 			// find their team page
-			if (mTeamURL.find()) {
+			if (mTeam.find()) { //from teamURL
 
 				// set and conecc
-				t.setTeampage(mTeamURL.group(0));
+				t.setTeampage(mTeam.group(1)); // changing to group 1
+				//System.out.println(t.getTeampage() + " found");
 				String teamPage = con(t.getTeampage());
 
 				// make matcher for the teamPage
@@ -95,10 +99,11 @@ public class DatabaseMain {
 					}
 					t.add(p);
 				}
-			}
+			}//here for comment
+			System.out.println(t.toString());
 			teams.add(t);
 			
-			System.out.println(t.getName() + " ADDED");
+			//System.out.println(t.getName() + " ADDED");
 		}
 		try (PrintWriter out = new PrintWriter("tespa team list.txt")) {
 		    out.println(teams.toString());
@@ -107,12 +112,9 @@ public class DatabaseMain {
 		}
 	}
 
-	private static String con(String u) throws IOException {      
-		//System.out.println("BEFORE " + u);
-		String encodedURL = URI.create(u).toASCIIString();
-		//System.out.println("AFTER " + encodedURL);
-		//System.out.println("Title: " + Jsoup.connect(encodedURL).get().title());
+	private static String con(String u) throws IOException {   
 		
+		String encodedURL = URI.create(u).toASCIIString();
 		URL url = new URL(encodedURL);
 
 		BufferedReader in = null;
@@ -125,14 +127,12 @@ public class DatabaseMain {
 			InputStreamReader isr = new InputStreamReader(is, "UTF-8");
 			in = new BufferedReader(isr);
 		} catch (Exception e) {
-			return "-1";
+			return "No page";
 		}
 		BufferedReader bufferedReader = new BufferedReader(in);
 		StringBuilder inputBuilder = new StringBuilder();
-		// read in
 		try {
 			inputBuilder = new StringBuilder();
-			// lines to speed things up
 			String line;
 			while ((line = bufferedReader.readLine()) != null) {
 				inputBuilder.append(line);
