@@ -13,11 +13,16 @@ public class DatabaseMain {
 	public static void main(String[] args) throws IOException {
 		
 		Tespa teams = new Tespa();
-
+		
 		// connect to regional or national page
-		String tourney = NATIONAL;
+		String tourney = REGIONAL;
 		String homePage = con("https://compete.tespa.org/tournament/" + tourney + "/phase/1");
 
+		// regex for dropped teams
+		String regexDropped = "<td>(([0-9][0-9]?)|(dropped))</td>";
+		Pattern pDrop = Pattern.compile(regexDropped);
+		Matcher mDrop = pDrop.matcher(homePage);
+		
 		// regex for finding team names
 		String regexTeamName = "(team-name)..([^<]*?)</span>";
 		Pattern pTeamName = Pattern.compile(regexTeamName);
@@ -50,7 +55,15 @@ public class DatabaseMain {
 			// make a new team (with team name)
 			Team t = new Team(mTeamName.group(2)); // changed
 			//System.out.println(t.getName() + " found");
-
+			
+			if(mDrop.find()){
+				System.out.println(mDrop.group(1));
+				while(mDrop.group(1).equals("dropped")){
+					mDrop.find();
+					mScores.find();
+					mTeam.find();
+				}
+			}
 			// find their scores
 			if (mScores.find()) {
 				t.setMatchScore(mScores.group(1));
