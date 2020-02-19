@@ -25,7 +25,8 @@ public class Tespa {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for(Team t : teams) {
-			sb.append(t.toString() + System.getProperty("line.separator"));
+			if(t.getMembers().size()>=6)
+				sb.append(t.toString() + System.getProperty("line.separator"));
 		}
 		return sb.toString();
 	}

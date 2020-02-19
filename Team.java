@@ -8,13 +8,20 @@ public class Team {
 	private String name;
 	private String matchScore;
 	private String mapDif;
+	public School school;
 
 	public Team() {
 		members = new ArrayList<Player>();
+		name = "Bye";
 	}
 
 	public Team(String n) {
 		name = n;
+		members = new ArrayList<Player>();
+	}
+	public Team(String n, String link) {
+		name = n;
+		teampage = link;
 		members = new ArrayList<Player>();
 	}
 
@@ -57,6 +64,9 @@ public class Team {
 		int total = 0;
 		int count = 0;
 		for (Player p : members) {
+			if(count == 6){
+				break;
+			}
 			if (p.getSr() > 0) { // some srs won't be found
 				total += p.getSr();
 				count++;

@@ -1,8 +1,5 @@
 public class Player {
-	enum Role{
-		Starter, Captain, Coordinator, Sub
-		}
-	private Role role;
+	private String role;
 	private String bnet;
 	private int sr;
 	private String overbuff;
@@ -13,10 +10,10 @@ public class Player {
 	public Player(String b){
 		bnet = b;
 	}
-	public Role getRole() {
+	public String getRole() {
 		return role;
 	}
-	public void setRole(Role role) {
+	public void setRole(String role) {
 		this.role = role;
 	}
 	public String getBnet() {
@@ -28,6 +25,12 @@ public class Player {
 	public int getSr() {
 		return sr;
 	}
+	public String getSrString() {
+		if(sr == -1){
+			return "PP";
+		}
+		return Integer.toString(sr);
+	}
 	public void setSr(int sr) {
 		this.sr = sr;
 	}
@@ -38,6 +41,6 @@ public class Player {
 		this.overbuff = overbuff;
 	}
 	public String toString() {
-		return String.format("%24s ", bnet) + " \t" + sr + "\t" + overbuff + System.getProperty("line.separator");
+		return String.format("%24s ", bnet) + " \t" + getSrString() + "\t" + overbuff + System.getProperty("line.separator");
 	}
 }

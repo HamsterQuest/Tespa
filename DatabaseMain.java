@@ -58,7 +58,7 @@ public class DatabaseMain {
 			
 			if(mDrop.find()){
 				System.out.println(mDrop.group(1));
-				while(mDrop.group(1).equals("dropped")){
+				while(mDrop.group(1).equals("dropped")){ //skip dropped teams
 					mDrop.find();
 					mScores.find();
 					mTeam.find();
